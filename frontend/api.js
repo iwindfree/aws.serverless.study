@@ -32,21 +32,26 @@ export default class APIHandler {
       category: cardObj.category
     });
     console.log(this.dummyData);
+    return id;
   }
 
   // TODO: ID로 카드 검색 후 내용,카테고리 수정
   async putCard(cardObj) {    
     this.dummyData = this.dummyData.map(card =>  {
       return card.id === cardObj.id ? {...card, category:cardObj.category, title:cardObj.title} : card
-    })
+    });
+    console.log(this.dummyData);
   }
 
   // TODO: ID로 카드 검색 후 삭제
   async deleteCard(id) {
-
+    this.dummyData = this.dummyData.filter(card => {
+      return card.id !== id
+    });
+    console.log(this.dummyData);
   }
 
   // TODO: API 요청 컨테이너. Method, Path, Body 속성 
   // TODO: API 호출 함수
-}
+} 
 
