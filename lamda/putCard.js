@@ -8,13 +8,29 @@ exports.handler = async (event) => {
   // TODO implement
   let response = "";
   try {
+    const id = event.pathParameters.id;
+    const body = JSON.parse(event.body);
+
     var params = {
       TableName: tableName,
+      Key: { id: id },
+      UpdateExpression: "set #c = :c, #t = :t",
+      //ConditionExpression: '#a < :MAX',
+      ExpressionAttributeNames: { "#c": "category", "#t": "title" },
+      ExpressionAttributeValues: {
+        ":c": body.category,
+        ":t": body.title,
+      },
     };
-
     var documentClient = new AWS.DynamoDB.DocumentClient();
-
-    const cards = await documentClient.scan(params).promise();
+    await documentClient.update(params).promise();
+    response = {
+      statusCode: 204,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
+    };
+    return response;
   } catch (exception) {
     console.log(exception);
     response = {
@@ -25,12 +41,4 @@ exports.handler = async (event) => {
       body: JSON.stringify({ "Message: ": exception }),
     };
   }
-  response = {
-    statusCode: 200,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-    },
-    body: JSON.stringify(cards),
-  };
-  return response;
 };
